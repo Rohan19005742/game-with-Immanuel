@@ -148,12 +148,14 @@ public class TreasureHuntGame {
     private Grid grid;
     private Player player;
     private boolean isGameRunning;
+    private int moves_left;
 
     public TreasureHuntGame(int gridSize, int monsterCount) {
         grid = new Grid(gridSize);
         player = new Player(grid);
         isGameRunning = true;
         addMonsters(monsterCount);
+        moves_left = gridSize * gridSize;
     }
 
     private void addMonsters(int count) { // user req 3
@@ -181,12 +183,13 @@ public class TreasureHuntGame {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Find the treasure by moving up, down, left, or right!");
 
-        while (isGameRunning) {
+        while (isGameRunning && moves_left > 0) {
             System.out.print("\n");
             System.out.print("Enter move (up, down, left, right): ");
             String direction = scanner.nextLine();
             player.move(direction);
             checkForMonsters();
+            moves_left -= 1;
 
             if (player.checkForTreasure()) {
                 System.out.println("Congratulations! You found the treasure!"); // user req 2
@@ -197,6 +200,9 @@ public class TreasureHuntGame {
             if (player.checkForFakeTreasure()) {
                 System.out.println("Unlucky! The treasure chest is empty!");
             }
+        }
+        if (moves_left <= 0){
+            System.out.println("You took too long");
         }
         scanner.close();
     }
