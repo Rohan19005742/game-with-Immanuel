@@ -21,13 +21,13 @@ public class TreasureHuntGame {
         placeTreasure();
     }
 
-    private void placePlayer() {
+    private void placePlayer() { // user requirement 5
         playerX = random.nextInt(gridSize);
         playerY = random.nextInt(gridSize);
         System.out.println("Player starting at (" + playerX + ", " + playerY + ")");
     }
 
-    private void placeTreasure() {
+    private void placeTreasure() { // user requirement 9
         treasureX = random.nextInt(gridSize);
         treasureY = random.nextInt(gridSize);
     }
@@ -36,12 +36,12 @@ public class TreasureHuntGame {
         return Math.abs(playerX - treasureX) + Math.abs(playerY - treasureY);
     }
 
-    private void displayDistanceHint() {
+    private void displayDistanceHint() { // user requirement 10
         int distance = calculateDistance();
         System.out.println("You are " + distance + " steps away from the treasure.");
     }
 
-    private void movePlayer(String direction) {
+    private void movePlayer(String direction) { // user requirement 6, needs fixing
         switch (direction.toLowerCase()) {
             case "up":
                 playerX = Math.max(0, playerX - 1);
@@ -64,7 +64,7 @@ public class TreasureHuntGame {
 
     private void checkForTreasure() {
         if (playerX == treasureX && playerY == treasureY) {
-            System.out.println("Congratulations! You found the treasure!");
+            System.out.println("Congratulations! You found the treasure!"); // user requirement 2
             isGameRunning = false;
         }
     }
@@ -85,7 +85,7 @@ public class TreasureHuntGame {
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("Welcome to the Treasure Hunt Game!");
-        System.out.print("Enter grid size: ");
+        System.out.print("Enter grid size: "); // user requirement 1
         int gridSize = scanner.nextInt();
         
         TreasureHuntGame game = new TreasureHuntGame(gridSize);
