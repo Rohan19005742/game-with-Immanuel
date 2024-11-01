@@ -3,52 +3,44 @@ import java.util.Scanner;
 
 public class TreasureHuntGame {
 
-    // Grid dimensions
     private int gridSize;
     private int playerX, playerY;
     private int treasureX, treasureY;
     private boolean isGameRunning;
     private Random random;
 
-    // Constructor
     public TreasureHuntGame(int gridSize) {
         this.gridSize = gridSize;
         this.random = new Random();
         initializeGame();
     }
 
-    // Initialize game setup
     private void initializeGame() {
         isGameRunning = true;
         placePlayer();
         placeTreasure();
     }
 
-    // Place player at a random location
     private void placePlayer() {
         playerX = random.nextInt(gridSize);
         playerY = random.nextInt(gridSize);
         System.out.println("Player starting at (" + playerX + ", " + playerY + ")");
     }
 
-    // Place treasure at a random location
     private void placeTreasure() {
         treasureX = random.nextInt(gridSize);
         treasureY = random.nextInt(gridSize);
     }
 
-    // Calculate distance to the treasure
     private int calculateDistance() {
         return Math.abs(playerX - treasureX) + Math.abs(playerY - treasureY);
     }
 
-    // Display distance hint to player
     private void displayDistanceHint() {
         int distance = calculateDistance();
         System.out.println("You are " + distance + " steps away from the treasure.");
     }
 
-    // Move the player in the specified direction
     private void movePlayer(String direction) {
         switch (direction.toLowerCase()) {
             case "up":
@@ -70,7 +62,6 @@ public class TreasureHuntGame {
         checkForTreasure();
     }
 
-    // Check if the player found the treasure
     private void checkForTreasure() {
         if (playerX == treasureX && playerY == treasureY) {
             System.out.println("Congratulations! You found the treasure!");
@@ -78,7 +69,6 @@ public class TreasureHuntGame {
         }
     }
 
-    // Main game loop
     public void playGame() {
         Scanner scanner = new Scanner(System.in);
 
@@ -91,7 +81,6 @@ public class TreasureHuntGame {
         scanner.close();
     }
 
-    // Main method to start the game
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
