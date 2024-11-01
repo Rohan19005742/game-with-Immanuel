@@ -6,12 +6,15 @@ class Grid {
     private int size;
     private int treasureX;
     private int treasureY;
+    private int fakeTreasureX;
+    private int fakeTreasureY;
     private ArrayList<Monster> monsters;
 
     public Grid(int size) {
         this.size = size;
         this.monsters = new ArrayList<>();
         placeTreasure();
+        placeFakeTreasure();
     }
 
     public void placeTreasure() { // user req 9
@@ -20,12 +23,28 @@ class Grid {
         treasureY = random.nextInt(size);
     }
 
+    public void placeFakeTreasure() {
+        Random random = new Random();
+        do {
+            fakeTreasureX = random.nextInt(size);
+            fakeTreasureY = random.nextInt(size);
+        } while (fakeTreasureX == treasureX && fakeTreasureY == treasureY); // Avoid placing the fake treasure at the real treasure's location
+    }
+
     public boolean isTreasureFound(int x, int y) {
         return x == treasureX && y == treasureY;
     }
 
+    public boolean isFakeTreasureFound(int x, int y) {
+        return x == fakeTreasureX && y == fakeTreasureY;
+    }
+
     public int getTreasureDistance(int x, int y) {
         return Math.abs(x - treasureX) + Math.abs(y - treasureY);
+    }
+
+    public int getFakeTreasureDistance(int x, int y) {
+        return Math.abs(x - fakeTreasureX) + Math.abs(y - fakeTreasureY);
     }
 
     public int getSize() {
@@ -68,6 +87,12 @@ class Player {
     }
 
     public void move(String direction) { // user req 6
+        Random random = new Random();
+        if (random.nextDouble() > 0.5) { 
+            String[] directions = {"up", "down", "left", "right"};
+            direction = directions[random.nextInt(directions.length)];
+        }
+
         switch (direction.toLowerCase()) {
             case "up":
                 if (y < grid.getSize() -1) y++;
@@ -105,11 +130,17 @@ class Player {
 
     private void displayDistanceHint() { // user req 10
         int distance = grid.getTreasureDistance(x, y);
+        int fakeTreasureDistance = grid.getFakeTreasureDistance(x, y);
+        System.out.println("You are " + fakeTreasureDistance + " steps away from the treasure.");
         System.out.println("You are " + distance + " steps away from the treasure.");
     }
 
     public boolean checkForTreasure() {
         return grid.isTreasureFound(x, y);
+    }
+
+    public boolean checkForFakeTreasure() {
+        return grid.isFakeTreasureFound(x, y);
     }
 }
 
@@ -151,6 +182,7 @@ public class TreasureHuntGame {
         System.out.println("Find the treasure by moving up, down, left, or right!");
 
         while (isGameRunning) {
+            System.out.print("\n");
             System.out.print("Enter move (up, down, left, right): ");
             String direction = scanner.nextLine();
             player.move(direction);
@@ -160,6 +192,10 @@ public class TreasureHuntGame {
                 System.out.println("Congratulations! You found the treasure!"); // user req 2
                 isGameRunning = false;
                 break;
+            }
+
+            if (player.checkForFakeTreasure()) {
+                System.out.println("Unlucky! The treasure chest is empty!");
             }
         }
         scanner.close();
