@@ -31,7 +31,7 @@ public class Monster {
         return type;
     }
 
-    public String greetPlayer() {
+    public String greetPlayer() { // user req 11
         switch (type.toLowerCase()) {
             case "scary":
                 return "A scary monster appears! You feel a chill down your spine!";

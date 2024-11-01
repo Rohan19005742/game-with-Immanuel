@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -5,14 +6,15 @@ class Grid {
     private int size;
     private int treasureX;
     private int treasureY;
-    private Player player;
+    private ArrayList<Monster> monsters;
 
     public Grid(int size) {
         this.size = size;
+        this.monsters = new ArrayList<>();
         placeTreasure();
     }
 
-    public void placeTreasure() {
+    public void placeTreasure() { // user req 9
         Random random = new Random();
         treasureX = random.nextInt(size);
         treasureY = random.nextInt(size);
@@ -30,8 +32,21 @@ class Grid {
         return size;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
+    public void addMonster(Monster monster) {
+        monsters.add(monster);
+    }
+
+    public Monster checkForMonster(int x, int y) {
+        for (Monster monster : monsters) {
+            if (monster.isAtPosition(x, y)) {
+                return monster;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Monster> getMonsters() {
+        return monsters;
     }
 }
 
@@ -45,26 +60,30 @@ class Player {
         placeAtRandomPosition();
     }
 
-    private void placeAtRandomPosition() {
+    private void placeAtRandomPosition() { // user req 5
         Random random = new Random();
         x = random.nextInt(grid.getSize());
         y = random.nextInt(grid.getSize());
         System.out.println("Player starting at (" + x + ", " + y + ")");
     }
 
-    public void move(String direction) {
+    public void move(String direction) { // user req 6
         switch (direction.toLowerCase()) {
             case "up":
-                if (x > 0) x--;
+                if (y < grid.getSize() -1) y++;
+                else System.out.println("reached end of grid, use another move");
                 break;
             case "down":
-                if (x < grid.getSize() - 1) x++;
+                if (y > 0 ) y--;
+                else System.out.println("reached end of grid, use another move");
                 break;
             case "left":
-                if (y > 0) y--;
+                if (x > 0) x--;
+                else System.out.println("reached end of grid, use another move");
                 break;
             case "right":
-                if (y < grid.getSize() - 1) y++;
+                if (x < grid.getSize() - 1) x++;
+                else System.out.println("reached end of grid, use another move");
                 break;
             default:
                 System.out.println("Invalid move. Use 'up', 'down', 'left', or 'right'.");
@@ -75,49 +94,88 @@ class Player {
         checkForTreasure();
     }
 
-    private void displayDistanceHint() {
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    private void displayDistanceHint() { // user req 10
         int distance = grid.getTreasureDistance(x, y);
         System.out.println("You are " + distance + " steps away from the treasure.");
     }
 
-    private void checkForTreasure() {
-        if (grid.isTreasureFound(x, y)) {
-            System.out.println("Congratulations! You found the treasure!");
-            System.exit(0); // End the game
-        }
+    public boolean checkForTreasure() {
+        return grid.isTreasureFound(x, y);
     }
 }
 
 public class TreasureHuntGame {
     private Grid grid;
     private Player player;
+    private boolean isGameRunning;
 
-    public TreasureHuntGame(int gridSize) {
+    public TreasureHuntGame(int gridSize, int monsterCount) {
         grid = new Grid(gridSize);
         player = new Player(grid);
-        grid.setPlayer(player);
+        isGameRunning = true;
+        addMonsters(monsterCount);
+    }
+
+    private void addMonsters(int count) { // user req 3
+        String[] monsterTypes = {"scary", "friendly", "aggressive"}; // user req 7
+        Random random = new Random();
+        for (int i = 0; i < count; i++) {
+            String type = monsterTypes[random.nextInt(monsterTypes.length)];
+            Monster monster = new Monster(grid.getSize(), type);
+            grid.addMonster(monster);
+        }
+    }
+
+    private void checkForMonsters() {
+        Monster monster = grid.checkForMonster(player.getX(), player.getY());
+        if (monster != null) {
+            System.out.println(monster.greetPlayer());
+            if (monster.getType().equals("scary") || monster.getType().equals("aggressive")) {
+                System.out.println("You were caught by a monster. Game Over!");
+                isGameRunning = false;
+            }
+        }
     }
 
     public void playGame() {
         Scanner scanner = new Scanner(System.in);
-
         System.out.println("Find the treasure by moving up, down, left, or right!");
-        while (true) {
+
+        while (isGameRunning) {
             System.out.print("Enter move (up, down, left, right): ");
             String direction = scanner.nextLine();
             player.move(direction);
+            checkForMonsters();
+
+            if (player.checkForTreasure()) {
+                System.out.println("Congratulations! You found the treasure!"); // user req 2
+                isGameRunning = false;
+                break;
+            }
         }
+        scanner.close();
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
         System.out.println("Welcome to the Treasure Hunt Game!");
-        System.out.print("Enter grid size: ");
+
+        System.out.print("Enter grid size: "); // user req 1
         int gridSize = scanner.nextInt();
+        System.out.print("Enter number of monsters: ");
+        int monsterCount = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
-        TreasureHuntGame game = new TreasureHuntGame(gridSize);
+        TreasureHuntGame game = new TreasureHuntGame(gridSize, monsterCount);
         game.playGame();
 
         scanner.close();
