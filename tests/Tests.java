@@ -1,10 +1,17 @@
+package tests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import Grid;
+import Monster;
+import Player;
+import TreasureHuntGame;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
-class AllTests {
+class Tests {
     private Grid grid;
     private Player player;
     private Monster monster;
@@ -123,7 +130,7 @@ class AllTests {
     }
 
     public static void main(String[] args) {
-        AllTests test = new AllTests();
+        Tests test = new Tests();
         
         try {
             test.setUp();
